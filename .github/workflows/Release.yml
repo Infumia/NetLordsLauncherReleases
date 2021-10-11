@@ -18,14 +18,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: GuillaumeFalourd/clone-github-repo-action@v1
-        with:
-          owner: 'infumia'
-          repository: 'netlords_launcher'
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build
         run: |
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/infumia/netlords_launcher.git
           cd netlords_launcher
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}" --dart-define="version=${{ steps.release.outputs.tag_name }}"
