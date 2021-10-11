@@ -20,7 +20,7 @@ jobs:
 
       - name: Build
         run: |
-          git clone https://${{ secrets.P_TOKEN }}@github.com/infumia/flutter_updater.git
+          git clone https://${{ secrets.P_TOKEN }}@github.com/infumia/netlords_launcher.git
           ls
           cd netlords_launcher
           flutter config --enable-windows-desktop
