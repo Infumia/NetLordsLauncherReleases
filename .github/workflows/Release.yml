@@ -24,11 +24,17 @@ jobs:
           cd netlords_launcher
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}" --dart-define="version=${{ steps.release.outputs.tag_name }}"
-          flutter pub run msix:create --v ${{ steps.release.outputs.tag_name  }}.${{ steps.release.outputs.tag_name }}
+          flutter pub run msix:create --v ${{ steps.release.outputs.tag_name }}.${{ steps.release.outputs.tag_name }}
+          echo test1
+          ls
           cd ..
+          echo test2
+          ls
           git clone https://github.com/infumia/flutter_updater.git
           cd flutter_updater
           dart pub get
+          echo test3
+          ls
           dart compile exe lib/main.dart --output ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
