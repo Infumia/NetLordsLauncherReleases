@@ -9,9 +9,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@master
-        with:
-          name: infumia/netlords_launcher
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: subosito/flutter-action@master
         with:
@@ -23,15 +20,12 @@ jobs:
 
       - name: Build
         run: |
-          pwd
-          ls
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/infumia/netlords_launcher.git
+          cd ${{ github.workspace }}
           flutter config --enable-windows-desktop
-          pwd
-          ls
           flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}" --dart-define="version=${{ steps.release.outputs.tag_name }}"
-          pwd
-          ls
           flutter pub run msix:create --v ${{ steps.release.outputs.tag_name  }}.${{ steps.release.outputs.tag_name }}
+          cd ..
           git clone https://github.com/infumia/flutter_updater.git
           cd flutter_updater
           dart pub get
