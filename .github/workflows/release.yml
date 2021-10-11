@@ -40,7 +40,7 @@ jobs:
         with:
           files: |
             win-build
-          dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win10
+          dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win10.zip
 
       - name: Zip Windows 7
         uses: vimtor/action-zip@v1
@@ -48,7 +48,7 @@ jobs:
           files: |
             netlords_launcher/build/windows/runner/Release
             !netlords_launcher/build/windows/runner/Release/netlords_launcher.msix
-          dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win7
+          dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win7.zip
 
       - uses: softprops/action-gh-release@v1
         with:
