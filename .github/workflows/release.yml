@@ -38,13 +38,13 @@ jobs:
       - name: Zip Windows 10
         uses: thedoctor0/zip-release@master
         with:
-          directory: win-build
+          path: win-build
           filename: 'NetLordsLauncher-${{ github.event.release.tag_name }}-win10.zip'
 
       - name: Zip Windows 7
         uses: thedoctor0/zip-release@master
         with:
-          directory: ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release
+          path: ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release
           filename: 'NetLordsLauncher-${{ github.event.release.tag_name }}-win7.zip'
           exclusions: '*.msix'
 
