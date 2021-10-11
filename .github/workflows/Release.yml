@@ -35,12 +35,15 @@ jobs:
           dart pub get
           echo test3
           ls
+          cd ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release\
+          ls
+          cd ${{ github.workspace }}\flutter_updater
           dart compile exe lib/main.dart --output ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
-          copy netlords_launcher/build/windows/runner/Release/netlordslauncher.msix win-build
-          copy netlords_launcher/assets/certificate.pfx win-build
-          copy netlords_launcher/assets/install.bat win-build
+          copy ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release\netlordslauncher.msix win-build
+          copy ${{ github.workspace }}\netlords_launcher\assets\certificate.pfx win-build
+          copy ${{ github.workspace }}\netlords_launcher\assets\install.bat win-build
 
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
