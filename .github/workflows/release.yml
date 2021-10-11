@@ -53,5 +53,5 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           files: |
-            NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7.zip
-            NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10.zip
+            NetLordsLauncher-${{ github.event.release.tag_name }}-win7.zip
+            NetLordsLauncher-${{ github.event.release.tag_name }}-win10.zip
