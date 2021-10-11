@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          name: infumia/netlords_launcher
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: subosito/flutter-action@master
+        with:
+          channel: master
+
+      - uses: release-drafter/release-drafter@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        run: |
+          flutter config --enable-windows-desktop
+          flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}" --dart-define="version=${{ steps.release.outputs.tag_name }}"
+          flutter pub run msix:create --v ${{ steps.release.outputs.tag_name  }}.${{ steps.release.outputs.tag_name }}
+          git clone https://github.com/infumia/flutter_updater.git
+          cd flutter_updater
+          dart pub get
+          dart compile exe lib/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
+          cd ${{ github.workspace }}
+          mkdir win-build
+          copy build/windows/runner/Release/netlordslauncher.msix win-build
+          copy assets/certificate.pfx win-build
+          copy assets/install.bat win-build
+
+      - name: Update Windows 10/11 File
+        uses: actions/upload-artifact@v2
+        with:
+          name: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10
+          path: win-build
+          retention-days: 1
+
+      - name: Update Windows 7/8 File
+        uses: actions/upload-artifact@v2
+        with:
+          name: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7
+          path: |
+            build/windows/runner/Release
+            !build/windows/runner/Release/netlordslauncher.msix
+          retention-days: 1
+
+  PreRelease:
+    needs: ["windows"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: subosito/flutter-action@master
+        with:
+          channel: master
+
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+
+      - name: Download files
+        uses: actions/download-artifact@v2
+
+      - name: Zip Windows 7
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: "NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7.zip"
+          path: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7
+
+      - name: Zip Windows 10/11
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: "NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10.zip"
+          path: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7.zip
+            NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10.zip
