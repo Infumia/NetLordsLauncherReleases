@@ -93,7 +93,6 @@ jobs:
 
       - uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.release.outputs.tag_name }}
           files: |
             NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7.zip
             NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10.zip
