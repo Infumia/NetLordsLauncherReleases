@@ -1,8 +1,8 @@
 name: Release
 
 on:
-  push:
-    branches: [master]
+  release:
+    types: [ published ]
 
 jobs:
   windows:
@@ -57,7 +57,7 @@ jobs:
             !netlords_launcher/build/windows/runner/Release/netlords_launcher.msix
           retention-days: 1
 
-  PreRelease:
+  release:
     needs: ["windows"]
     runs-on: ubuntu-latest
     steps:
@@ -93,6 +93,7 @@ jobs:
 
       - uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.release.outputs.tag_name }}
           files: |
             NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7.zip
             NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10.zip
