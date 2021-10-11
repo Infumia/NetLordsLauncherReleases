@@ -48,6 +48,8 @@ jobs:
           filename: 'NetLordsLauncher-${{ github.event.release.tag_name }}-win7.zip'
           exclusions: '*.msix'
 
+      - run: ls
+
       - uses: softprops/action-gh-release@v1
         with:
           files: |
