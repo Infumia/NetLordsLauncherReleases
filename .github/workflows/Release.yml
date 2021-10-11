@@ -21,7 +21,6 @@ jobs:
       - name: Build
         run: |
           git clone https://${{ secrets.P_TOKEN }}@github.com/infumia/netlords_launcher.git
-          ls
           cd netlords_launcher
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}" --dart-define="version=${{ steps.release.outputs.tag_name }}"
@@ -30,12 +29,12 @@ jobs:
           git clone https://github.com/infumia/flutter_updater.git
           cd flutter_updater
           dart pub get
-          dart compile exe lib/main.dart --output ${{ github.workspace }}\build\windows\runner\Release\updater.exe
+          dart compile exe lib/main.dart --output ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release\updater.exe
           cd ${{ github.workspace }}
           mkdir win-build
-          copy build/windows/runner/Release/netlordslauncher.msix win-build
-          copy assets/certificate.pfx win-build
-          copy assets/install.bat win-build
+          copy netlords_launcher/build/windows/runner/Release/netlordslauncher.msix win-build
+          copy netlords_launcher/assets/certificate.pfx win-build
+          copy netlords_launcher/assets/install.bat win-build
 
       - name: Update Windows 10/11 File
         uses: actions/upload-artifact@v2
@@ -49,8 +48,8 @@ jobs:
         with:
           name: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7
           path: |
-            build/windows/runner/Release
-            !build/windows/runner/Release/netlordslauncher.msix
+            netlords_launcher/build/windows/runner/Release
+            !netlords_launcher/build/windows/runner/Release/netlordslauncher.msix
           retention-days: 1
 
   PreRelease:
