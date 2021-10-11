@@ -46,8 +46,8 @@ jobs:
         uses: vimtor/action-zip@v1
         with:
           files: |
-            netlords_launcher/build/windows/runner/Release
-            !netlords_launcher/build/windows/runner/Release/netlords_launcher.msix
+            ${{ github.workspace }}\netlords_launcher\build\windows\runner\Release
+            !${{ github.workspace }}\netlords_launcher\build\windows\runner\Release\netlords_launcher.msix
           dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win7.zip
 
       - uses: softprops/action-gh-release@v1
