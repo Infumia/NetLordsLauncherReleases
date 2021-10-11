@@ -14,20 +14,14 @@ jobs:
         with:
           channel: master
 
-      - uses: release-drafter/release-drafter@master
-        id: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build
         run: |
           git clone https://github.com/forkstuffs/flutter_acrylic.git
           git clone https://${{ secrets.P_TOKEN }}@github.com/infumia/netlords_launcher.git
           cd netlords_launcher
           flutter config --enable-windows-desktop
-          flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}.0" --dart-define="version=${{ steps.release.outputs.tag_name }}.0"
-          echo "${{ steps.release.outputs.tag_name }}.0"
-          flutter pub run msix:create --v ${{ steps.release.outputs.tag_name }}.0
+          flutter build windows --dart-define="build_id=${{ github.event.release.tag_name }}.0" --dart-define="version=${{ github.event.release.tag_name }}.0"
+          flutter pub run msix:create --v .0
           cd ..
           git clone https://github.com/infumia/flutter_updater.git
           cd flutter_updater
@@ -41,55 +35,20 @@ jobs:
           copy ${{ github.workspace }}\netlords_launcher\assets\certificate.pfx win-build
           copy ${{ github.workspace }}\netlords_launcher\assets\install.bat win-build
 
-      - name: Update Windows 10/11 File
-        uses: actions/upload-artifact@v2
+      - name: Zip Windows 10
+        uses: vimtor/action-zip@v1
         with:
-          name: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10
-          path: win-build
-          retention-days: 1
-
-      - name: Update Windows 7/8 File
-        uses: actions/upload-artifact@v2
-        with:
-          name: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7
-          path: |
-            netlords_launcher/build/windows/runner/Release
-            !netlords_launcher/build/windows/runner/Release/netlords_launcher.msix
-          retention-days: 1
-
-  release:
-    needs: ["windows"]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: subosito/flutter-action@master
-        with:
-          channel: master
-
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
-
-      - name: Download files
-        uses: actions/download-artifact@v2
-
-      - uses: release-drafter/release-drafter@master
-        id: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            win-build
+          dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win10
 
       - name: Zip Windows 7
-        uses: thedoctor0/zip-release@master
+        uses: vimtor/action-zip@v1
         with:
-          type: "zip"
-          filename: "NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7.zip"
-          path: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win7
-
-      - name: Zip Windows 10/11
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: "NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10.zip"
-          path: NetLordsLauncher-${{ steps.release.outputs.tag_name }}-win10
+          files: |
+            netlords_launcher/build/windows/runner/Release
+            !netlords_launcher/build/windows/runner/Release/netlords_launcher.msix
+          dest: NetLordsLauncher-${{ github.event.release.tag_name }}-win7
 
       - uses: softprops/action-gh-release@v1
         with:
