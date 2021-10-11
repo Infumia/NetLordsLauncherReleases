@@ -18,14 +18,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Clone Github Repo Action
-        uses: GuillaumeFalourd/clone-github-repo-action@v1
-        with:
-          owner: infumia
-          repository: netlords_launcher
-
       - name: Build
         run: |
+          git clone https://${{ secrets.P_TOKEN }}@github.com/infumia/flutter_updater.git
+          ls
           cd netlords_launcher
           flutter config --enable-windows-desktop
           flutter build windows --dart-define="build_id=${{ steps.release.outputs.tag_name }}" --dart-define="version=${{ steps.release.outputs.tag_name }}"
